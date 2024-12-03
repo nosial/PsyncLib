@@ -55,7 +55,9 @@
         }
 
         /**
+         * Converts the object to its string representation.
          *
+         * @return string The UUID of the object.
          */
         public function __toString(): string
         {
