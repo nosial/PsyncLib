@@ -21,6 +21,14 @@
             "ASSEMBLY_VERSION": "%ASSEMBLY.VERSION%",
             "ASSEMBLY_UID": "%ASSEMBLY.UID%"
         },
+        "dependencies": [
+            {
+                "name": "com.symfony.uid",
+                "version": "latest",
+                "source_type": "remote",
+                "source": "symfony/uid=latest@packagist"
+            }
+        ],
         "configurations": [
             {
                 "name": "release",
