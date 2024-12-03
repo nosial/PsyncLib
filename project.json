@@ -1,0 +1,59 @@
+{
+    "project": {
+        "compiler": {
+            "extension": "php",
+            "minimum_version": "8.2",
+            "maximum_version": "8.0"
+        }
+    },
+    "assembly": {
+        "name": "PsyncLib",
+        "package": "net.nosial.psynclib",
+        "description": "PsyncLib is a library for synchronizing files between two directories.",
+        "version": "1.0.0",
+        "uuid": "22df0cee-2eb1-4837-abbe-075933d54480"
+    },
+    "build": {
+        "source_path": "src",
+        "default_configuration": "release",
+        "define_constants": {
+            "ASSEMBLY_PACKAGE": "%ASSEMBLY.PACKAGE%",
+            "ASSEMBLY_VERSION": "%ASSEMBLY.VERSION%",
+            "ASSEMBLY_UID": "%ASSEMBLY.UID%"
+        },
+        "configurations": [
+            {
+                "name": "release",
+                "build_type": "ncc",
+                "output": "build/release/%ASSEMBLY.PACKAGE%.ncc"
+            },
+            {
+                "name": "debug",
+                "build_type": "ncc",
+                "output": "build/debug/%ASSEMBLY.PACKAGE%.ncc",
+                "define_constants": {
+                    "DEBUG": "1"
+                }
+            },
+            {
+                "name": "release-compressed",
+                "build_type": "ncc",
+                "output": "build/release/%ASSEMBLY.PACKAGE%.gz.ncc",
+                "options": {
+                    "compression": "high"
+                }
+            },
+            {
+                "name": "debug-compressed",
+                "build_type": "ncc",
+                "output": "build/debug/%ASSEMBLY.PACKAGE%.gz.ncc",
+                "options": {
+                    "compression": "high"
+                },
+                "define_constants": {
+                    "DEBUG": "1"
+                }
+            }
+        ]
+    }
+}
