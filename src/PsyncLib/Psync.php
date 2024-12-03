@@ -131,6 +131,7 @@
          *
          * @return array An associative array containing the results of each promise,
          *               indexed by their unique identifiers (UUIDs).
+         * @throws Throwable
          */
         public static function wait(): array
         {
