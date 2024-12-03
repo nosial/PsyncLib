@@ -101,6 +101,8 @@
         {
             // Wait for the process to finish
             pcntl_waitpid($p->getPid(), $status);
+            pcntl_signal(SIGTERM, SIG_DFL);
+            posix_kill($p->getPid(), SIGTERM);
 
             // Read the serialized data from shared memory
             $shm = $p->getShm();
@@ -124,6 +126,24 @@
             }
 
             return $result;
+        }
+
+        /**
+         * Closes and cleans up resources associated with the given process.
+         *
+         * @param P $p The process instance to be closed.
+         * @return void
+         */
+        private static function close(P $p): void
+        {
+            // Clean up the child process to prevent zombie processes
+            pcntl_waitpid($p->getPid(), $status);
+            pcntl_signal(SIGTERM, SIG_DFL);
+            posix_kill($p->getPid(), SIGTERM);
+
+            $shm = $p->getShm();
+            shmop_delete($shm);
+            unset(self::$promises[$p->getUuid()]);
         }
 
         /**
@@ -171,6 +191,29 @@
             {
                 if(!self::isDone($p))
                 {
+                    $count++;
+                }
+            }
+
+            return $count;
+        }
+
+        /**
+         * Cleans up resources associated with promises that are not completed.
+         *
+         * Iterates through a collection of promises, and for each promise that is not
+         * yet marked as done, calls a method to close and clean up the resource.
+         *
+         * @return int The number of promises that were closed and cleaned up.
+         */
+        public static function clean(): int
+        {
+            $count = 0;
+            foreach(self::$promises as $uuid => $p)
+            {
+                if(!self::isDone($p))
+                {
+                    self::close($p);
                     $count++;
                 }
             }
