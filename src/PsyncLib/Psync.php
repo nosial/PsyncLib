@@ -7,7 +7,7 @@
 
     class Psync
     {
-        private static int $sharedMemorySize = 1024;
+        private static int $sharedMemorySize = 65536;
         private static int $sharedMemoryPermissions = 0644;
         private static array $promises = [];
 
