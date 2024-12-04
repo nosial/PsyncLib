@@ -27,6 +27,11 @@
                 "version": "latest",
                 "source_type": "remote",
                 "source": "symfony/uid=latest@packagist"
+            },
+            {
+                "name": "net.nosial.loglib",
+                "version": "latest",
+                "source": "nosial/libs.log=latest@n64"
             }
         ],
         "configurations": [
