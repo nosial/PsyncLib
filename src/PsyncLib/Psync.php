@@ -2,14 +2,36 @@
 
     namespace PsyncLib;
 
+    use LogLib\Logger;
     use RuntimeException;
     use Throwable;
 
     class Psync
     {
+        private static ?Logger $logger = null;
         private static int $sharedMemorySize = 65536;
         private static int $sharedMemoryPermissions = 0644;
         private static array $promises = [];
+        private static int $lastClean = 0;
+
+        /**
+         * Retrieves the singleton instance of the Logger.
+         *
+         * Checks if the static $logger property is null, and if so, initializes it with
+         * a new Logger instance configured with a specific name. Ensures that the same
+         * Logger instance is returned on subsequent calls.
+         *
+         * @return Logger The singleton Logger instance for logging activities.
+         */
+        private static function getLogger(): Logger
+        {
+            if(self::$logger === null)
+            {
+                self::$logger = new Logger('net.nosial.psync');
+            }
+
+            return self::$logger;
+        }
 
         /**
          * Executes a callable within a forked process while handling
@@ -22,6 +44,7 @@
          */
         public static function do(callable $callable, array $args = []): P
         {
+            self::getLogger()->debug(sprintf('[%s]: Preparing to call %s', posix_getpid(), self::callableToString($callable)));
             $shm_key = ftok(__FILE__, chr(mt_rand(0, 255))); // Generate a more unique key
             $try = 0;
             $shm = false;
@@ -49,6 +72,7 @@
             }
             elseif ($pid === 0)
             {
+                self::getLogger()->debug(sprintf('[%s]: Executing %s', posix_getpid(), self::callableToString($callable)));
                 // Child process
                 try
                 {
@@ -57,15 +81,18 @@
                     // Write the length of the serialized data and the data itself
                     $data = pack('L', strlen($serialized)) . $serialized; // Pack the length as a 4-byte integer
                     shmop_write($shm, $data, 0); // Write to shared memory
+                    self::getLogger()->debug(sprintf('[%s]: Finished executing %s', posix_getpid(), self::callableToString($callable)));
                 }
                 catch (Throwable $e)
                 {
+                    self::getLogger()->error(sprintf('[%s]: Exception thrown for %s: %s', posix_getpid(), self::callableToString($callable), $e->getMessage()), $e);
                     $error = serialize($e); // Serialize exception if any
                     $data = pack('L', strlen($error)) . $error; // Pack the length as a 4-byte integer
                     shmop_write($shm, $data, 0);
                 }
                 finally
                 {
+                    self::getLogger()->debug(sprintf('[%s]: Resource closure at %s', posix_getpid(), self::callableToString($callable)));
                     shmop_delete($shm); // Delete shared memory
                     exit(0); // Exit the child process
                 }
@@ -73,8 +100,32 @@
 
             // Parent process: return the P object immediately
             $p = new P($pid, $shm);
+            self::getLogger()->debug(sprintf('[%s]: Promise created for %s: %s', posix_getpid(), self::callableToString($callable), "test"));
             self::$promises[$p->getUuid()] = $p;
             return $p;
+        }
+
+        /**
+         * Converts a*/
+        private static function callableToString(callable $callable): string
+        {
+            if(is_string($callable))
+            {
+                return $callable;
+            }
+
+            if(is_array($callable))
+            {
+                foreach($callable as $item)
+                {
+                    if(is_string($item))
+                    {
+                        return $item;
+                    }
+                }
+            }
+
+            return '';
         }
 
         /**
@@ -208,6 +259,12 @@
          */
         public static function clean(): int
         {
+            if(time() - self::$lastClean < 8)
+            {
+                return 0;
+            }
+
+            self::$lastClean = time();
             $count = 0;
             foreach(self::$promises as $uuid => $p)
             {
