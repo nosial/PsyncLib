@@ -10,7 +10,7 @@
         "name": "PsyncLib",
         "package": "net.nosial.psynclib",
         "description": "PsyncLib is a library for synchronizing files between two directories.",
-        "version": "1.0.0",
+        "version": "1.0.1",
         "uuid": "22df0cee-2eb1-4837-abbe-075933d54480"
     },
     "build": {
@@ -29,9 +29,9 @@
                 "source": "symfony/uid=latest@packagist"
             },
             {
-                "name": "net.nosial.loglib",
+                "name": "net.nosial.loglib2",
                 "version": "latest",
-                "source": "nosial/libs.log=latest@n64"
+                "source": "nosial/loglib2=latest@github"
             }
         ],
         "configurations": [
