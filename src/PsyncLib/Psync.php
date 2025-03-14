@@ -2,7 +2,7 @@
 
     namespace PsyncLib;
 
-    use LogLib\Logger;
+    use LogLib2\Logger;
     use RuntimeException;
     use Throwable;
 
