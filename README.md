@@ -4,10 +4,26 @@ PsyncLib (`net.nosial.psynclib`) is a PHP library that introduces parallel opera
 additional software such as a Message Queue or a Job Queue. Using Shared Memory & Forking, PsyncLib allows you to
 create parallel operations by calling several simple functions.
 
+## Community
+
+This project and many others from Nosial are available on multiple publicly available and free git repositories at
+
+- [n64](https://git.n64.cc/nosial/psynclib)
+- [GitHub](https://github.com/nosial/psynclib)
+- [Codeberg](https://codeberg.org/nosial/psynclib)
+
+Issues & Pull Requests are frequently checked and to be referenced accordingly in commits and changes, Nosial remains
+dedicated to keep these repositories up to date when possible.
+
+For questions & discussions see the public Telegram community at [@NosialDiscussions](https://t.me/NosialDiscussions).
+We do encourage community support and discussions, please be respectful and follow the rules of the community.
+
+
 ## Table of contents
 
 <!-- TOC -->
 * [PsyncLib](#psynclib)
+  * [Community](#community)
   * [Table of contents](#table-of-contents)
   * [Versioning](#versioning)
   * [Installation](#installation)
